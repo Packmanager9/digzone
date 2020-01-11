@@ -1,0 +1,64 @@
+
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+
+  <div class="gamepage-wrapper">
+
+    <!-- Basic header. Should hold simple branding and navigation. -->
+    <header class="gamepage-header">
+      <!-- Image provided by Eucalyp Studio in Artificial Intelligence from https://www.iconfinder.com/iconsets/artificial-intelligence-6 -->
+      <!-- <img id="site-logo" src="assets/iconfinder_ArtificialIntelligence29_2890576_blackwhite.png"> -->
+      <ul class="nav-content">
+        <!-- <li class="nav-list-item"><a class="nav-link-text" href="">Home</a></li> -->
+        <li class="nav-list-item"><a class="nav-link-text" href="http://ditzbitz.com/games.html">Games</a></li>
+        <!-- <li class="nav-list-item"><a class="nav-link-text" href="https://www.linkedin.com/in/cole-ditzler-41b160133/" target="_blank">About</a></li> -->
+      </ul>
+    </header>
+
+    <!-- Container for page content. Contains and aligns instructions, game, and ads. -->
+    <div class="game-content-container">
+      
+      <!-- Left side banner. Should contain instuctions for the game. -->
+      <aside class="gamepage-left-aside">
+        <h2>Digzone</h2>
+        <ul>
+            <li> This is a 2D mine-em-up.</li> 
+            <li> Press Spacebar to open or close the store.</li> 
+          <li> Click to shoot the clusters of squares.</li> 
+          <li> Watch out for the spawning clusters coming from the edge of the map!</li> 
+          <li> Don't crash into the colorful clusters.</li> 
+          <li> Immortal bullets mode cannot be turned off.</li> 
+          <li id="score"> 0</li> 
+          <li id="money"> 0</li> 
+        </ul>
+      </aside>
+    
+      <!-- Game container. Holds the game for this page scaled to fit.  -->
+      <script src="digzone.js"></script>
+      <div class="game-container">
+        
+  <div id="dog-image-container">
+
+    <canvas  id="tutorial" width="650" height="650"></canvas>
+    <button id="mort">Immortal Bullets</button>
+
+</div id="go">
+      </div>
+    
+      <!-- Right side banner. No content for now. Perhaps ad-space in the future. -->
+      <aside class="gamepage-right-aside">
+        <!-- Add content here later. -->
+      </aside>
+    </div>
+
+    <!-- Simple footer. Just a copyright notice. -->
+    <footer class="games-footer">
+      <!-- © Cole Ditzler -->
+    </footer>
+
+  </div>
+</html>
