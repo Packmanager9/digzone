@@ -1,8 +1,21 @@
 
 window.addEventListener('DOMContentLoaded', (event) =>{
 
+    // let deathballs = []
+
+    var audio = new Audio('digzone.wav');
+    
+document.addEventListener('click', (event) => {
+
+        // audio.play();
+
+        // audio.loop = true
+    })
+
     let keysPressed = {};
 
+    let autofiretimer
+    let lifelinedelay = 0
     let bombtimer = 0
     let turretlevel = 0
     let spawndrop = 0
@@ -89,6 +102,7 @@ document.addEventListener('keydown', (event) => {
             }
 
         }
+        
         move(){
             let xmomaverage = 0
             let ymomaverage = 0
@@ -105,10 +119,12 @@ document.addEventListener('keydown', (event) => {
             
             for(let r = 0; r <this.bits.length; r++ ){
                 this.bits[r].y += ymomaverage 
+                this.bits[r].ymomaverage = ymomaverage * this.bits.length // (Math.floor(Math.sqrt(this.bits.length))+2)
             }
             
             for(let r = 0; r <this.bits.length; r++ ){
                 this.bits[r].x += xmomaverage 
+                this.bits[r].xmomaverage = xmomaverage * this.bits.length // (Math.floor(Math.sqrt(this.bits.length))+2)
             }
 
 
@@ -894,7 +910,11 @@ yz = 0
                             death()
                         }else{
                             console.log("boom")
-                            bomb()
+                            if(lifelinedelay >= 10){
+
+                                bomb()
+                                lifelinedelay = 0
+                            }
                         }
                          }
                     }
@@ -961,8 +981,21 @@ yz = 0
                     storemethod()
                 }
             }
-
+            lifelinedelay++
             bombtimer++
+
+        for(let d = 0; d < deathballs.length; d++){
+            deathballs[d].draw()
+            deathballs[d].move()
+            deathballs[d].radius *= .96
+
+
+        }
+        for(let d = 0; d < deathballs.length; d++){
+            if(deathballs[d].radius < .2){
+                deathballs.splice(d,1)
+            }
+        }
         }, 10)
     
     
@@ -1494,8 +1527,12 @@ for(let o = 0; o<bullets.length; o++){
                     if(bomblifeline == 0){
                         death()
                     }else{
-                        console.log("boom")
-                        bomb()
+                        console.log("boom") 
+                          if(lifelinedelay >= 10){
+
+                            bomb()
+                            lifelinedelay = 0
+                        }
                     }
                      }
                 }
@@ -1555,8 +1592,22 @@ for(let o = 0; o<bullets.length; o++){
                 storemethod()
             }
         }
-
+        lifelinedelay++
         bombtimer++
+
+
+        for(let d = 0; d < deathballs.length; d++){
+            deathballs[d].draw()
+            deathballs[d].move()
+            deathballs[d].radius *= .96
+
+
+        }
+        for(let d = 0; d < deathballs.length; d++){
+            if(deathballs[d].radius < .2){
+                deathballs.splice(d,1)
+            }
+        }
     }, 10)
 
     function splitter(){
@@ -1881,7 +1932,7 @@ function connected(blorp, bit){
             xblock.splice(bump[-k], 1)
         }
         let q =  [...blorp.bits.filter(block => !blockus.includes(block))]
-        q =  [...q.filter(block => (typeof block !== undefined))]
+        q =  [...q.filter(block => (typeof block !== "undefined"))]
         let bhlab = new Blob(q)
         let blarb = new Blob(blockus)
         blobs.push(bhlab)
@@ -2118,6 +2169,9 @@ const rect = myPics.getBoundingClientRect();
 
 
 myPics.addEventListener('mousemove', e => {
+
+    x = (e.clientX - rect.left);
+    y = (e.clientY - rect.top);
   if (isDrawing === true) {
     drawLine(context, x, y, e.clientX - rect.left, e.clientY - rect.top);
     x = e.clientX - rect.left;
@@ -2126,6 +2180,8 @@ myPics.addEventListener('mousemove', e => {
 });
 
 window.addEventListener('mouseup', e => {
+
+    clearInterval(autofiretimer)
   if (isDrawing === true) {
     drawLine(context, x, y, e.clientX - rect.left, e.clientY - rect.top);
     x = 0;
@@ -2150,16 +2206,16 @@ function shootturret(turret){
     if(store == 1){
 
         let holdtarget = Math.floor(Math.random()*allsquares.length)
-        x = allsquares[holdtarget].x
-        y = allsquares[holdtarget].y
+     let   x1 = allsquares[holdtarget].x
+      let   y1 = allsquares[holdtarget].y
 
   if (shotcount >= 0){
     bullets[bullets.length] = new Circle(turret.x,turret.y,1,"#ffffff")
     bullets[bullets.length-1].health = piercing  //Math.ceil(score/10)
 
   
-    s = Math.abs(turret.x - x)
-    b = Math.abs(turret.y - y)
+    s = Math.abs(turret.x - x1)
+    b = Math.abs(turret.y - y1)
   
   
   
@@ -2238,19 +2294,19 @@ function shootturret(turret){
     ////////console.log(gg/hh, gg, hh,g,h,s,b)
     ////////console.log((Math.abs(b)*Math.abs(s)))
   
-    if(x > turret.x){
+    if(x1 > turret.x){
      //circ2.ymom = g
      bullets[bullets.length-1].xmom = s
      }
-     if(x < turret.x){
+     if(x1 < turret.x){
     // circ2.ymom = g
     bullets[bullets.length-1].xmom = -s
      }
-     if(y< turret.y){
+     if(y1< turret.y){
          bullets[bullets.length-1].ymom = -b
     // circ2.xmom = h
      }
-     if(y> turret.y){
+     if(y1> turret.y){
          bullets[bullets.length-1].ymom = b
     // circ2.xmom = h
      }
@@ -2283,11 +2339,148 @@ function shootturret(turret){
 
 myPics.addEventListener('mousedown', e => {
 
+    if(store == 1){
+
+        x = (e.clientX - rect.left);
+        y = (e.clientY - rect.top);
+  
+  if (shotcount >= 0){
+    bullets[bullets.length] = new Circle(circ.x,circ.y,1,"#ffffff")
+    bullets[bullets.length-1].health = piercing  //Math.ceil(score/10)
+
+  
+    s = Math.abs(circ.x - x)
+    b = Math.abs(circ.y - y)
+  
+  
+  
+  
+  
+  
+  
+    g = s*s/b*b
+    h = b*b/s*s
+  
+  
+    n = g*g
+    m = h*h 
+  
+  
+  
+    d = Math.sqrt((m+n))
+  
+    p = d/25
+  
+    g = g/p
+  
+    h = h/p
+  
+    gg = h+g
+  
+    hh = g*h
+  
+  //    if(b < 1){
+  
+     
+  //     b -= 1
+  //  }
+  //  if(b > -1){
+  
+   
+  //     b += 1
+  //  }
+  //  if(s < -1){
+  
+   
+  //  s -= 1
+  // }
+  // if(s > 1){
+  
+  
+  //  s += 1
+  // }
+  
+  // b *= 100
+  // s *= 100
+  
+  //////////console.log((Math.abs(b)*Math.abs(s)))
+  
+  
+    for (let k = 0; (Math.abs(b)+Math.abs(s)) > maxbulletspeed; k++ ){
+     b = b*.9999
+     s = s*.9999
+    }
+    for (let k = 0; (Math.abs(b)+Math.abs(s)) < maxbulletspeed; k++ ){
+     b = b/.9999
+     s = s/.9999
+    }
+  
+  // j = b / 100
+  // w = s / 100
+  
+  // if(j > w){
+  //     b = b *j
+  //     s = s*j
+  // } else {
+  //     b = b *w
+  //     s = s*w
+  // }
+  
+    ////////console.log(gg/hh, gg, hh,g,h,s,b)
+    ////////console.log((Math.abs(b)*Math.abs(s)))
+  
+    if(x > circ.x){
+     //circ2.ymom = g
+     bullets[bullets.length-1].xmom = s
+     }
+     if(x < circ.x){
+    // circ2.ymom = g
+    bullets[bullets.length-1].xmom = -s
+     }
+     if(y< circ.y){
+         bullets[bullets.length-1].ymom = -b
+    // circ2.xmom = h
+     }
+     if(y> circ.y){
+         bullets[bullets.length-1].ymom = b
+    // circ2.xmom = h
+     }
+    
+  
+     //bullets[bullets.length].ymom = s
+     //bullets[bullets.length].xmom = b
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  //    bullets.length +=1
+  }
+  
+     shotcount--
+
+}else{
+
+    // console.log(holdclick)
+
+    x = (e.clientX - rect.left);
+    y = (e.clientY - rect.top);
+    holdclick.x = x
+    holdclick.y = y
+
+}
+    
+    autofiretimer =  window.setInterval(function(){ 
         //isDrawing = true;
           if(store == 1){
 
-            x = (e.clientX - rect.left);
-            y = (e.clientY - rect.top);
+            // x = (e.clientX - rect.left);
+            // y = (e.clientY - rect.top);
       
       if (shotcount >= 0){
         bullets[bullets.length] = new Circle(circ.x,circ.y,1,"#ffffff")
@@ -2419,6 +2612,7 @@ myPics.addEventListener('mousedown', e => {
         holdclick.y = y
 
     }
+}, 80)
   });
 
 
@@ -2426,7 +2620,7 @@ myPics.addEventListener('mousedown', e => {
 
 
   function death(){
-
+    deathanimation(circ)
 
     circ.radius = 100
     circ.x = 1000000000
@@ -2588,5 +2782,35 @@ function bomb(){
 
 
     }
+    
 }
+
+
+let deathballs = []
+
+function deathanimation(body){
+
+    let start = Math.random()
+
+    let rotx = start
+    let roty = start
+
+    let deathrays = Math.floor(Math.random()*25)+2
+
+    deathrays = 12
+
+    for(let g = 0; g < deathrays; g++){
+
+
+        let dot1 = new Circle(body.x, body.y, body.radius, body.color, Math.cos(rotx), Math.sin(roty) )
+        deathballs.push(dot1)
+
+        rotx += 2*Math.PI/deathrays
+        roty += 2*Math.PI/deathrays
+    }
+
+}
+
+
+
 })
